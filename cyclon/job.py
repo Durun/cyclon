@@ -1,4 +1,3 @@
-from __future__ import annotations
 from cyclon.repo import Repository
 from cyclon.env import extractor, importer, patternMaker, outPath
 from typing import Union
@@ -10,28 +9,28 @@ import os
 
 class Job(object):
     @staticmethod
-    def fromUrl(repoUrl: str, lang: str) -> NormalJob:
+    def fromUrl(repoUrl: str, lang: str):
         return NormalJob(
             repo=Repository.getOrClone(url=repoUrl),
             lang=lang
         )
 
-    def runChanges(self) -> Job:
+    def runChanges(self):
         raise NotImplementedError
 
-    def runImport(self) -> Job:
+    def runImport(self):
         raise NotImplementedError
 
-    def runPatterns(self) -> Job:
+    def runPatterns(self):
         raise NotImplementedError
 
-    def cleanRepository(self) -> Job:
+    def cleanRepository(self):
         raise NotImplementedError
 
-    def cleanStructure(self) -> Job:
+    def cleanStructure(self):
         raise NotImplementedError
 
-    def cleanDB(self) -> Job:
+    def cleanDB(self):
         raise NotImplementedError
 
 
@@ -93,7 +92,7 @@ class NormalJob(Job):
     def cleanRepository(self) -> Job:
         return self._removeOnDemand(path=self.repo.dirPath)
 
-    def cleanStructure(self) -> FailuredJob:
+    def cleanStructure(self) -> Job:
         return self._removeOnDemand(path=Path(str(self.dbPath)+".structures"))
 
     def cleanDB(self) -> Job:
@@ -107,26 +106,26 @@ class FailuredJob(Job):
     def __str__(self) -> str:
         return str(self.base)
 
-    def runChanges(self) -> FailuredJob:
+    def runChanges(self) -> Job:
         logging.warn("Passed run Changes: {}".format(self))
         return self
 
-    def runImport(self) -> FailuredJob:
+    def runImport(self) -> Job:
         logging.warn("Passed run Import: {}".format(self))
         return self
 
-    def runPatterns(self) -> FailuredJob:
+    def runPatterns(self) -> Job:
         logging.warn("Passed run Patterns: {}".format(self))
         return self
 
-    def cleanRepository(self) -> FailuredJob:
+    def cleanRepository(self) -> Job:
         logging.warn("Passed clean Repository: {}".format(self))
         return self
 
-    def cleanStructure(self) -> FailuredJob:
+    def cleanStructure(self) -> Job:
         logging.warn("Passed clean Structure: {}".format(self))
         return self
 
-    def cleanDB(self) -> FailuredJob:
+    def cleanDB(self) -> Job:
         logging.warn("Passed clean DB: {}".format(self))
         return self

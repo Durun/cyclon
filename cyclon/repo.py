@@ -1,4 +1,3 @@
-from __future__ import annotations
 from pathlib import Path
 from typing import Optional
 import os
@@ -20,7 +19,7 @@ def _repoName(url: str) -> str:
 
 class Repository(object):
     @staticmethod
-    def getOrClone(url: str) -> Repository:
+    def getOrClone(url: str):
         repoPath = repoPoolPath / _repoName(url)
         optionalRepo = Repository._getOrNone(repoPath)
         if (optionalRepo is None):
@@ -28,13 +27,13 @@ class Repository(object):
         return optionalRepo
 
     @staticmethod
-    def _clone(url: str) -> Repository:
+    def _clone(url: str):
         repoPath = repoPoolPath / _repoName(url)
         gitClone(url, dst=repoPath)
         return Repository(dirPath=repoPath)
 
     @staticmethod
-    def _getOrNone(repoPath: Path) -> Optional[Repository]:
+    def _getOrNone(repoPath: Path):
         return Repository(repoPath) if repoPath.exists() else None
 
     def __init__(self, dirPath: Path):
