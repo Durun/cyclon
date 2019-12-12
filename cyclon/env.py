@@ -16,16 +16,16 @@ nitronPath = _binPath / "nitron.jar"
 extractor = ChangeExtractor(
     jarPath=cpanalyzerPath,
     configPath=nitronConfigDir,
-    heap_GB=1,
+    heap_GB=32,
     threadNum=4
 )
 
 importer = AstImporter(
     nitronJarPath=nitronPath,
-    nitronHeap_GB=1
+    nitronHeap_GB=4
 )
 
 patternMaker = PatternMaker(
     jarPath=cpanalyzerPath,
-    heap_GB=1
+    heap_GB=4
 )
