@@ -11,7 +11,7 @@ class Job(object):
     @staticmethod
     def fromUrl(repoUrl: str, lang: str):
         return NormalJob(
-            repo=Repository.getOrClone(url=repoUrl),
+            repo=Repository.fromUrl(url=repoUrl),
             lang=lang
         )
 
@@ -52,6 +52,7 @@ class NormalJob(Job):
             return self
 
     def runChanges(self) -> Job:
+        self.repo.cloneIfNotExists()
         if (self.dbPath.exists()):
             logging.info(
                 "Passed ChangeExtract Job: {} DB exists.".format(self))

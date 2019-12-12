@@ -19,28 +19,22 @@ def _repoName(url: str) -> str:
 
 class Repository(object):
     @staticmethod
-    def getOrClone(url: str):
-        repoPath = repoPoolPath / _repoName(url)
-        optionalRepo = Repository._getOrNone(repoPath)
-        if (optionalRepo is None):
-            optionalRepo = Repository._clone(url)
-        return optionalRepo
+    def fromUrl(url: str):
+        return Repository(url)
 
-    @staticmethod
-    def _clone(url: str):
-        repoPath = repoPoolPath / _repoName(url)
-        gitClone(url, dst=repoPath)
-        return Repository(dirPath=repoPath)
-
-    @staticmethod
-    def _getOrNone(repoPath: Path):
-        return Repository(repoPath) if repoPath.exists() else None
-
-    def __init__(self, dirPath: Path):
-        self.dirPath = dirPath
-        self.name = dirPath.name
+    def __init__(self, url: str):
+        self.url = url
+        self.dirPath = repoPoolPath / _repoName(url)
+        self.name = self.dirPath.name
         logging.info("Instantiated Repogitory: {} on {}".format(
             self.name, self.dirPath))
 
     def __str__(self) -> str:
         return self.name
+
+    def _clone(self):
+        gitClone(url=self.url, dst=self.dirPath)
+        return self
+
+    def cloneIfNotExists(self):
+        return self if self.dirPath.exists() else self._clone()
