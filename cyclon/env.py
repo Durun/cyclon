@@ -1,0 +1,31 @@
+from pathlib import Path
+from .ChangeExtractor import ChangeExtractor
+from .AstImporter import AstImporter
+from .PatternMaker import PatternMaker
+
+_binPath = Path("bin").resolve().absolute()
+
+repoPoolPath = Path("repositories").resolve()
+outPath = Path("db").resolve()
+nitronConfigDir = Path("config").resolve()
+
+
+cpanalyzerPath = _binPath / "nitron-CPAnalyzer.jar"
+nitronPath = _binPath / "nitron.jar"
+
+extractor = ChangeExtractor(
+    jarPath=cpanalyzerPath,
+    configPath=nitronConfigDir,
+    heap_GB=1,
+    threadNum=4
+)
+
+importer = AstImporter(
+    nitronJarPath=nitronPath,
+    nitronHeap_GB=1
+)
+
+patternMaker = PatternMaker(
+    jarPath=cpanalyzerPath,
+    heap_GB=1
+)
