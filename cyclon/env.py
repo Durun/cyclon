@@ -12,6 +12,7 @@ nitronConfigDir = Path("config").resolve()
 
 cpanalyzerPath = _binPath / "nitron-CPAnalyzer.jar"
 nitronPath = _binPath / "nitron.jar"
+estimaterPath = _binPath / "CPAnalyzer-cost-estimate.jar"
 
 extractor = ChangeExtractor(
     jarPath=cpanalyzerPath,
@@ -28,4 +29,11 @@ importer = AstImporter(
 patternMaker = PatternMaker(
     jarPath=cpanalyzerPath,
     heap_GB=4
+)
+
+estimater = ChangeExtractor(
+    jarPath=estimaterPath,
+    configPath=nitronConfigDir,
+    heap_GB=32,
+    threadNum=1
 )

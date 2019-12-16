@@ -1,10 +1,11 @@
 from cyclon.repo import Repository
-from cyclon.env import extractor, importer, patternMaker, outPath
+from cyclon.env import extractor, importer, patternMaker, estimater, outPath
 from typing import Union
 from pathlib import Path
 import shutil
 import logging
 import os
+import subprocess
 
 
 class Job(object):
@@ -14,6 +15,12 @@ class Job(object):
             repo=Repository.fromUrl(url=repoUrl),
             lang=lang
         )
+
+    def fetchRepository(self):
+        raise NotImplementedError
+
+    def runEstimate(self):
+        raise NotImplementedError
 
     def runChanges(self):
         raise NotImplementedError
@@ -51,12 +58,39 @@ class NormalJob(Job):
         else:
             return self
 
-    def runChanges(self) -> Job:
+    def fetchRepository(self) -> Job:
         self.repo.cloneIfNotExists()
+        return self.toFailureIf(not self.repo.dirPath.exists())
+
+    def runEstimate(self) -> Job:
+        if (not self.repo.dirPath.exists()):
+            logging.warn(
+                "Passed Estimate Job: {} Repo not exists.".format(self))
+            return self.toFailureIf(True)
+
+        logging.info("Start Estimate Job: {}".format(self))
+        result = estimater.run(
+            repoPath=self.repo.dirPath,
+            dbPath=self.dbPath,
+            langName=self.lang
+        )
+        with open("{}.cost".format(self.dbPath.absolute())) as input:
+            with open("estimated-costs", "a") as output:
+                output.write(input.read())
+
+        return self.toFailureIf(result.returncode != 0)
+
+    def runChanges(self) -> Job:
+        if (not self.repo.dirPath.exists()):
+            logging.warn(
+                "Passed ChangeExtract Job: {} Repo not exists.".format(self))
+            return self.toFailureIf(True)
+
         if (self.dbPath.exists()):
             logging.info(
                 "Passed ChangeExtract Job: {} DB exists.".format(self))
             return self
+
         logging.info("Start ChangeExtract Job: {}".format(self))
         result = extractor.run(
             repoPath=self.repo.dirPath,
@@ -106,6 +140,14 @@ class FailuredJob(Job):
 
     def __str__(self) -> str:
         return str(self.base)
+
+    def fetchRepository(self) -> Job:
+        logging.warn("Passed run Fetch: {}".format(self))
+        return self
+
+    def runEstimate(self) -> Job:
+        logging.warn("Passed run Estimate: {}".format(self))
+        return self
 
     def runChanges(self) -> Job:
         logging.warn("Passed run Changes: {}".format(self))
