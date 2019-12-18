@@ -13,7 +13,7 @@ import logging
 from typing import List
 from pathlib import Path
 import sys
-from cyclon.env import repoPoolPath, outPath, cpanalyzerPath, nitronPath
+from cyclon.env import repoPoolPath, outPath, cpanalyzerPath, nitronPath, defaultThread
 
 
 def readJobList(filename: str) -> List[Job]:
@@ -26,7 +26,9 @@ def readJobList(filename: str) -> List[Job]:
 
         jobs = [Job.fromUrl(
             lang=args[0],
-            repoUrl=args[1]) for args in parsedList]
+            repoUrl=args[1],
+            thread=args[2] if len(args) > 2 else defaultThread
+        ) for args in parsedList]
     for job in jobs:
         logging.info("queued : {}".format(job))
     return jobs

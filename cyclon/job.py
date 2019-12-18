@@ -1,5 +1,5 @@
 from cyclon.repo import Repository
-from cyclon.env import extractor, importer, patternMaker, estimater, outPath
+from cyclon.env import extractor, importer, patternMaker, estimater, outPath, defaultThread
 from typing import Union
 from pathlib import Path
 import shutil
@@ -10,10 +10,11 @@ import subprocess
 
 class Job(object):
     @staticmethod
-    def fromUrl(repoUrl: str, lang: str):
+    def fromUrl(repoUrl: str, lang: str, thread: int = defaultThread):
         return NormalJob(
             repo=Repository.fromUrl(url=repoUrl),
-            lang=lang
+            lang=lang,
+            thread=thread
         )
 
     def fetchRepository(self):
@@ -42,10 +43,12 @@ class Job(object):
 
 
 class NormalJob(Job):
-    def __init__(self, repo: Repository, lang: str):
+    def __init__(self, repo: Repository, lang: str, thread: int = defaultThread):
         self.repo = repo
-        self.dbPath = outPath / (repo.name + ".db")
+        self.dbPath = outPath / lang / (repo.name + ".db")
         self.lang = lang
+        self.thread = thread
+        os.makedirs(self.dbPath.parent, exist_ok=True)
         logging.info("Instantiated Job: {}".format(self))
 
     def __str__(self) -> str:
@@ -74,10 +77,16 @@ class NormalJob(Job):
             dbPath=self.dbPath,
             langName=self.lang
         )
-        with open("{}.cost".format(self.dbPath.absolute())) as input:
+        try:
+            with open("{}.cost".format(self.dbPath.absolute())) as input:
+                lines = input.read().splitlines()
+            entry = lines[0] + "\n" + lines[1] + "\t" + \
+                self.lang + " " + self.repo.url + "\n"
             with open("estimated-costs", "a") as output:
-                output.write(input.read())
-
+                output.write(entry)
+        except FileNotFoundError as err:
+            logging.error(err)
+            return self.toFailureIf(True)
         return self.toFailureIf(result.returncode != 0)
 
     def runChanges(self) -> Job:
@@ -95,7 +104,8 @@ class NormalJob(Job):
         result = extractor.run(
             repoPath=self.repo.dirPath,
             dbPath=self.dbPath,
-            langName=self.lang
+            langName=self.lang,
+            thread=self.thread
         )
         return self.toFailureIf(result.returncode != 0)
 

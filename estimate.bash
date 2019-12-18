@@ -1,5 +1,6 @@
 JOBFILE=$1
-python3 estimate.py ${JOBFILE} &> ${JOBFILE}.log
+python3 estimate.py ${JOBFILE}
 COSTS=estimated-costs
-sort -r -k 4 -t \t $COSTS | uniq > /tmp/$COSTS
-mv /tmp/$COSTS $COSTS
+
+cat $COSTS >> costs && sort -n -k 3 -t \t costs | uniq > /tmp/costs && mv /tmp/costs costs && rm $COSTS
+sort -n -k 3 -t \t costs | uniq > /tmp/costs && mv /tmp/costs costs

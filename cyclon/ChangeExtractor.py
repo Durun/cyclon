@@ -37,6 +37,7 @@ class ChangeExtractor(object):
             repoPath: Path,
             dbPath: Path,
             langName: str,
+            thread: int = None
             ) -> CompletedProcess:
         softwareName = repoPath.name
 
@@ -52,7 +53,7 @@ class ChangeExtractor(object):
                                 "-db", dbPath,
                                 "-lang", langName,
                                 "-soft", softwareName,
-                                "-thd", self.threadNum,
+                                "-thd", thread or self.threadNum,
                                 "-n", "-q"
                             ])
 

@@ -14,11 +14,13 @@ cpanalyzerPath = _binPath / "nitron-CPAnalyzer.jar"
 nitronPath = _binPath / "nitron.jar"
 estimaterPath = _binPath / "CPAnalyzer-cost-estimate.jar"
 
+defaultThread = 4
+
 extractor = ChangeExtractor(
     jarPath=cpanalyzerPath,
     configPath=nitronConfigDir,
     heap_GB=32,
-    threadNum=4
+    threadNum=defaultThread
 )
 
 importer = AstImporter(

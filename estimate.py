@@ -34,7 +34,7 @@ def readJobList(filename: str) -> List[Job]:
 
 def process(jobs: List[Job]):
     for job in jobs:
-        job.fetchRepository().runEstimate().cleanRepository()
+        job.cleanDB().fetchRepository().runEstimate()  # .cleanRepository()
     return
 
 
