@@ -49,6 +49,6 @@ FROM guest.patterns
 ;
 INSERT OR IGNORE INTO main.structures SELECT * FROM guest.structures;
 
-COMMIT
+COMMIT;
 
 DETACH guest;
