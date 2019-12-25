@@ -14,7 +14,7 @@ cpanalyzerPath = _binPath / "nitron-CPAnalyzer.jar"
 nitronPath = _binPath / "nitron.jar"
 estimaterPath = _binPath / "CPAnalyzer-cost-estimate.jar"
 
-defaultThread = 20
+defaultThread = 8
 
 extractor = ChangeExtractor(
     jarPath=cpanalyzerPath,
