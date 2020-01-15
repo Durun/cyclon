@@ -11,6 +11,7 @@ nitronConfigDir = Path("config").resolve()
 
 
 cpanalyzerPath = _binPath / "nitron-CPAnalyzer.jar"
+originalCpanalyzerPath = _binPath / "CPAnalyzer.jar"
 nitronPath = _binPath / "nitron.jar"
 estimaterPath = _binPath / "CPAnalyzer-cost-estimate.jar"
 
@@ -38,4 +39,11 @@ estimater = ChangeExtractor(
     configPath=nitronConfigDir,
     heap_GB=32,
     threadNum=1
+)
+
+originalExtractor = ChangeExtractor(
+    jarPath=originalCpanalyzerPath,
+    configPath=nitronConfigDir,
+    heap_GB=8,
+    threadNum=defaultThread
 )

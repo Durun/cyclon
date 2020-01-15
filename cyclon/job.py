@@ -1,5 +1,5 @@
 from cyclon.repo import Repository
-from cyclon.env import extractor, importer, patternMaker, estimater, outPath, defaultThread
+from cyclon.env import extractor, originalExtractor, importer, patternMaker, estimater, outPath, defaultThread
 from typing import Union
 from pathlib import Path
 import shutil
@@ -24,6 +24,9 @@ class Job(object):
         raise NotImplementedError
 
     def runChanges(self):
+        raise NotImplementedError
+
+    def runChangesOriginal(self):
         raise NotImplementedError
 
     def runImport(self):
@@ -109,6 +112,26 @@ class NormalJob(Job):
         )
         return self.toFailureIf(result.returncode != 0)
 
+    def runChangesOriginal(self) -> Job:
+        if (not self.repo.dirPath.exists()):
+            logging.warn(
+                "Passed ChangeExtractOriginal Job: {} Repo not exists.".format(self))
+            return self.toFailureIf(True)
+
+        if (self.dbPath.exists()):
+            logging.info(
+                "Passed ChangeExtractOriginal Job: {} DB exists.".format(self))
+            return self
+
+        logging.info("Start ChangeExtractOriginal Job: {}".format(self))
+        result = originalExtractor.run(
+            repoPath=self.repo.dirPath,
+            dbPath=self.dbPath,
+            langName=self.lang,
+            thread=self.thread
+        )
+        return self.toFailureIf(result.returncode != 0)
+
     def runImport(self) -> Job:
         logging.info("Start AstImport Job: {}".format(self))
         result = importer.run(dbPath=self.dbPath)
@@ -161,6 +184,10 @@ class FailuredJob(Job):
 
     def runChanges(self) -> Job:
         logging.warn("Passed run Changes: {}".format(self))
+        return self
+
+    def runChangesOriginal(self) -> Job:
+        logging.warn("Passed run ChangesOriginal: {}".format(self))
         return self
 
     def runImport(self) -> Job:
