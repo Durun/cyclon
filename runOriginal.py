@@ -22,10 +22,9 @@ def process(jobs: List[Job]):
     return
 
 def main():
-    mainFile.main()
     args = sys.argv
     if (len(args) != 2):
-        print("Usage: mainThenRunOriginal.py JOBFILE\n")
+        print("Usage: runOriginal.py JOBFILE\n")
         return
     jobFile = Path(args[1])
 
