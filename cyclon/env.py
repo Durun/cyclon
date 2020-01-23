@@ -47,3 +47,8 @@ originalExtractor = ChangeExtractor(
     heap_GB=8,
     threadNum=defaultThread
 )
+
+originalPatternMaker = PatternMaker(
+    jarPath=originalCpanalyzerPath,
+    heap_GB=4
+)

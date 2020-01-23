@@ -1,5 +1,5 @@
 from cyclon.repo import Repository
-from cyclon.env import extractor, originalExtractor, importer, patternMaker, estimater, outPath, defaultThread
+from cyclon.env import extractor, originalExtractor, importer, patternMaker, originalPatternMaker, estimater, outPath, defaultThread
 from typing import Union
 from pathlib import Path
 import shutil
@@ -33,6 +33,9 @@ class Job(object):
         raise NotImplementedError
 
     def runPatterns(self):
+        raise NotImplementedError
+
+    def runPatternsOriginal(self):
         raise NotImplementedError
 
     def cleanRepository(self):
@@ -144,6 +147,13 @@ class NormalJob(Job):
         )
         return self.toFailureIf(result.returncode != 0)
 
+    def runPatternsOriginal(self) -> Job:
+        logging.info("Start Patterns Job: {}".format(self))
+        result = originalPatternMaker.run(
+            dbPath=self.dbPath
+        )
+        return self.toFailureIf(result.returncode != 0)
+
     def _removeOnDemand(self, path: Path) -> Job:
         if (path.exists()):
             try:
@@ -195,6 +205,10 @@ class FailuredJob(Job):
         return self
 
     def runPatterns(self) -> Job:
+        logging.warn("Passed run Patterns: {}".format(self))
+        return self
+
+    def runPatternsOriginal(self) -> Job:
         logging.warn("Passed run Patterns: {}".format(self))
         return self
 

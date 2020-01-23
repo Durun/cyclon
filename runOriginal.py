@@ -18,7 +18,7 @@ from cyclon.env import repoPoolPath, outPath, originalCpanalyzerPath
 
 def process(jobs: List[Job]):
     for job in jobs:
-        job.cleanDB().cleanStructure().fetchRepository().runChangesOriginal().runPatterns()
+        job.cleanDB().cleanStructure().fetchRepository().runChangesOriginal().runPatternsOriginal()
     return
 
 def main():
