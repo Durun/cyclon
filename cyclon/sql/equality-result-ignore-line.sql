@@ -361,6 +361,33 @@ FROM
 	)
 ;
 
+INSERT INTO nitron_result
+SELECT *
+FROM
+	(	SELECT 'F value' AS data ),
+	(
+		SELECT 
+			(SELECT rText FROM nitron_result WHERE data='Precision') * (SELECT rText FROM nitron_result WHERE data='Recall') * 2
+			/
+			((SELECT rText FROM nitron_result WHERE data='Precision') + (SELECT rText FROM nitron_result WHERE data='Recall'))
+	),(
+		SELECT 
+			(SELECT nText FROM nitron_result WHERE data='Precision') * (SELECT rText FROM nitron_result WHERE data='Recall') * 2
+			/
+			((SELECT nText FROM nitron_result WHERE data='Precision') + (SELECT rText FROM nitron_result WHERE data='Recall'))
+	),(
+		SELECT 
+			(SELECT changes FROM nitron_result WHERE data='Precision') * (SELECT rText FROM nitron_result WHERE data='Recall') * 2
+			/
+			((SELECT changes FROM nitron_result WHERE data='Precision') + (SELECT rText FROM nitron_result WHERE data='Recall'))
+	),(
+		SELECT 
+			(SELECT patterns FROM nitron_result WHERE data='Precision') * (SELECT rText FROM nitron_result WHERE data='Recall') * 2
+			/
+			((SELECT patterns FROM nitron_result WHERE data='Precision') + (SELECT rText FROM nitron_result WHERE data='Recall'))
+	)
+;
+
 /* views */
 DROP VIEW IF EXISTS view_join_rText;
 CREATE VIEW view_join_rText AS
@@ -428,4 +455,4 @@ JOIN NH3.patterns ON nh3_id=id
 ;
 */
 
-SELECT * FROM nitron_result WHERE data='Precision' OR data='Recall';
+SELECT * FROM nitron_result WHERE data='Precision' OR data='Recall' OR data='F value';

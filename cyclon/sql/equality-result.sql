@@ -17,7 +17,7 @@ WHERE (end != 0)
 ;
 
 CREATE TABLE join_rText AS
-SELECT 
+SELECT
     nh3.id AS nh3_id,
     nitron.id AS nitron_id
 FROM temp.nh3
@@ -29,7 +29,7 @@ JOIN temp.nitron
 ;
 
 CREATE TABLE join_nText AS
-SELECT 
+SELECT
     nh3.id AS nh3_id,
     nitron.id AS nitron_id
 FROM temp.nh3
@@ -56,7 +56,7 @@ FROM NH3.changes
 ;
 
 CREATE TABLE join_changes AS
-SELECT 
+SELECT
     nh3.id AS nh3_id,
     nitron.id AS nitron_id
 FROM temp.nh3
@@ -80,7 +80,7 @@ FROM NH3.patterns
 ;
 
 CREATE TABLE join_patterns AS
-SELECT 
+SELECT
     nh3.id AS nh3_id,
     nitron.id AS nitron_id
 FROM temp.nh3
@@ -150,7 +150,7 @@ SELECT *
 FROM
 	(	SELECT 'nitron_all' AS data ),
 	(
-		SELECT count(*) AS rText 
+		SELECT count(*) AS rText
 		FROM (SELECT DISTINCT id FROM main.codes)
 	),(
 		SELECT count(*) AS nText
@@ -168,7 +168,7 @@ SELECT *
 FROM
 	(	SELECT 'nh3_all' AS data ),
 	(
-		SELECT count(*) AS rText 
+		SELECT count(*) AS rText
 		FROM (SELECT DISTINCT id FROM nh3.codes)
 	),(
 		SELECT count(*) AS nText
@@ -186,7 +186,7 @@ SELECT *
 FROM
 	(	SELECT 'nitron_no_blank' AS data ),
 	(
-		SELECT count(*) AS rText 
+		SELECT count(*) AS rText
 		FROM (SELECT DISTINCT id FROM main.codes WHERE end != 0)
 	),(
 		SELECT count(*) AS nText
@@ -204,7 +204,7 @@ SELECT *
 FROM
 	(	SELECT 'nh3_no_blank' AS data ),
 	(
-		SELECT count(*) AS rText 
+		SELECT count(*) AS rText
 		FROM (SELECT DISTINCT id FROM nh3.codes WHERE end != 0)
 	),(
 		SELECT count(*) AS nText
@@ -222,7 +222,7 @@ SELECT *
 FROM
 	(	SELECT '(nh3_correct)' AS data ),
 	(
-		SELECT count(*) AS rText 
+		SELECT count(*) AS rText
 		FROM (SELECT DISTINCT nh3_id FROM join_rText)
 	),(
 		SELECT count(*) AS nText
@@ -240,7 +240,7 @@ SELECT *
 FROM
 	(	SELECT 'nitron_correct' AS data ),
 	(
-		SELECT count(*) AS rText 
+		SELECT count(*) AS rText
 		FROM (SELECT DISTINCT nitron_id FROM join_rText)
 	),(
 		SELECT count(*) AS nText
@@ -258,22 +258,22 @@ SELECT *
 FROM
 	(	SELECT 'Precision' AS data ),
 	(
-		SELECT 
+		SELECT
 			(SELECT cast(rText as real) FROM nitron_result WHERE data='nitron_correct')
 			/
 			(SELECT rText FROM nitron_result WHERE data='nitron_no_blank')
 	),(
-		SELECT 
+		SELECT
 			(SELECT cast(nText as real) FROM nitron_result WHERE data='nitron_correct')
 			/
 			(SELECT nText FROM nitron_result WHERE data='nitron_no_blank')
 	),(
-		SELECT 
+		SELECT
 			(SELECT cast(changes as real) FROM nitron_result WHERE data='nitron_correct')
 			/
 			(SELECT changes FROM nitron_result WHERE data='nitron_no_blank')
 	),(
-		SELECT 
+		SELECT
 			(SELECT cast(patterns as real) FROM nitron_result WHERE data='nitron_correct')
 			/
 			(SELECT patterns FROM nitron_result WHERE data='nitron_no_blank')
@@ -284,25 +284,52 @@ SELECT *
 FROM
 	(	SELECT 'Recall' AS data ),
 	(
-		SELECT 
+		SELECT
 			(SELECT cast(rText as real) FROM nitron_result WHERE data='nitron_correct')
 			/
 			(SELECT rText FROM nitron_result WHERE data='nh3_no_blank')
 	),(
-		SELECT 
+		SELECT
 			(SELECT cast(nText as real) FROM nitron_result WHERE data='nitron_correct')
 			/
 			(SELECT nText FROM nitron_result WHERE data='nh3_no_blank')
 	),(
-		SELECT 
+		SELECT
 			(SELECT cast(changes as real) FROM nitron_result WHERE data='nitron_correct')
 			/
 			(SELECT changes FROM nitron_result WHERE data='nh3_no_blank')
 	),(
-		SELECT 
+		SELECT
 			(SELECT cast(patterns as real) FROM nitron_result WHERE data='nitron_correct')
 			/
 			(SELECT patterns FROM nitron_result WHERE data='nh3_no_blank')
+	)
+;
+
+INSERT INTO nitron_result
+SELECT *
+FROM
+	(	SELECT 'F value' AS data ),
+	(
+		SELECT
+			(SELECT rText FROM nitron_result WHERE data='Precision') * (SELECT rText FROM nitron_result WHERE data='Recall') * 2
+			/
+			((SELECT rText FROM nitron_result WHERE data='Precision') + (SELECT rText FROM nitron_result WHERE data='Recall'))
+	),(
+		SELECT
+			(SELECT nText FROM nitron_result WHERE data='Precision') * (SELECT rText FROM nitron_result WHERE data='Recall') * 2
+			/
+			((SELECT nText FROM nitron_result WHERE data='Precision') + (SELECT rText FROM nitron_result WHERE data='Recall'))
+	),(
+		SELECT
+			(SELECT changes FROM nitron_result WHERE data='Precision') * (SELECT rText FROM nitron_result WHERE data='Recall') * 2
+			/
+			((SELECT changes FROM nitron_result WHERE data='Precision') + (SELECT rText FROM nitron_result WHERE data='Recall'))
+	),(
+		SELECT
+			(SELECT patterns FROM nitron_result WHERE data='Precision') * (SELECT rText FROM nitron_result WHERE data='Recall') * 2
+			/
+			((SELECT patterns FROM nitron_result WHERE data='Precision') + (SELECT rText FROM nitron_result WHERE data='Recall'))
 	)
 ;
 
