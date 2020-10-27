@@ -74,7 +74,7 @@ class NormalJob(Job):
     def runEstimate(self) -> Job:
         if (not self.repo.dirPath.exists()):
             logging.warn(
-                "Passed Estimate Job: {} Repo not exists.".format(self))
+                "Skipped Estimate Job: {} Repo not exists.".format(self))
             return self.toFailureIf(True)
 
         logging.info("Start Estimate Job: {}".format(self))
@@ -98,12 +98,12 @@ class NormalJob(Job):
     def runChanges(self) -> Job:
         if (not self.repo.dirPath.exists()):
             logging.warn(
-                "Passed ChangeExtract Job: {} Repo not exists.".format(self))
+                "Skipped ChangeExtract Job: {} Repo not exists.".format(self))
             return self.toFailureIf(True)
 
         if (self.dbPath.exists()):
             logging.info(
-                "Passed ChangeExtract Job: {} DB exists.".format(self))
+                "Skipped ChangeExtract Job: {} DB exists.".format(self))
             return self
 
         logging.info("Start ChangeExtract Job: {}".format(self))
@@ -118,12 +118,12 @@ class NormalJob(Job):
     def runChangesOriginal(self) -> Job:
         if (not self.repo.dirPath.exists()):
             logging.warn(
-                "Passed ChangeExtractOriginal Job: {} Repo not exists.".format(self))
+                "Skipped ChangeExtractOriginal Job: {} Repo not exists.".format(self))
             return self.toFailureIf(True)
 
         if (self.dbPath.exists()):
             logging.info(
-                "Passed ChangeExtractOriginal Job: {} DB exists.".format(self))
+                "Skipped ChangeExtractOriginal Job: {} DB exists.".format(self))
             return self
 
         logging.info("Start ChangeExtractOriginal Job: {}".format(self))
@@ -185,41 +185,41 @@ class FailuredJob(Job):
         return str(self.base)
 
     def fetchRepository(self) -> Job:
-        logging.warn("Passed run Fetch: {}".format(self))
+        logging.warn("Skipped run Fetch: {}".format(self))
         return self
 
     def runEstimate(self) -> Job:
-        logging.warn("Passed run Estimate: {}".format(self))
+        logging.warn("Skipped run Estimate: {}".format(self))
         return self
 
     def runChanges(self) -> Job:
-        logging.warn("Passed run Changes: {}".format(self))
+        logging.warn("Skipped run Changes: {}".format(self))
         return self
 
     def runChangesOriginal(self) -> Job:
-        logging.warn("Passed run ChangesOriginal: {}".format(self))
+        logging.warn("Skipped run ChangesOriginal: {}".format(self))
         return self
 
     def runImport(self) -> Job:
-        logging.warn("Passed run Import: {}".format(self))
+        logging.warn("Skipped run Import: {}".format(self))
         return self
 
     def runPatterns(self) -> Job:
-        logging.warn("Passed run Patterns: {}".format(self))
+        logging.warn("Skipped run Patterns: {}".format(self))
         return self
 
     def runPatternsOriginal(self) -> Job:
-        logging.warn("Passed run Patterns: {}".format(self))
+        logging.warn("Skipped run Patterns: {}".format(self))
         return self
 
     def cleanRepository(self) -> Job:
-        logging.warn("Passed clean Repository: {}".format(self))
+        logging.warn("Skipped clean Repository: {}".format(self))
         return self
 
     def cleanStructure(self) -> Job:
-        logging.warn("Passed clean Structure: {}".format(self))
+        logging.warn("Skipped clean Structure: {}".format(self))
         return self
 
     def cleanDB(self) -> Job:
-        logging.warn("Passed clean DB: {}".format(self))
+        logging.warn("Skipped clean DB: {}".format(self))
         return self
