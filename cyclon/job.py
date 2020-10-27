@@ -50,6 +50,9 @@ class Job(object):
     def cleanDB(self):
         raise NotImplementedError
 
+    def cleanWarningDB(self):
+        raise NotImplementedError
+
 
 class NormalJob(Job):
     def __init__(self, repo: Repository, lang: str, thread: int = defaultThread):
@@ -188,7 +191,10 @@ class NormalJob(Job):
         return self._removeOnDemand(path=Path(str(self.dbPath)+".structures"))
 
     def cleanDB(self) -> Job:
-        return self._removeOnDemand(path=self.dbPath)
+        return self._removeOnDemand(self.dbPath)
+
+    def cleanWarningDB(self) -> Job:
+        return self._removeOnDemand(self.warningDbPath)
 
 
 class FailuredJob(Job):
@@ -240,4 +246,8 @@ class FailuredJob(Job):
 
     def cleanDB(self) -> Job:
         logging.warn("Skipped clean DB: {}".format(self))
+        return self
+
+    def cleanWarningDB(self) -> Job:
+        logging.warn("Skipped clean WarningDB: {}".format(self))
         return self
