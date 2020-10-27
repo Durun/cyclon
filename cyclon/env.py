@@ -11,13 +11,14 @@ sqlBin = "sqlite3"
 repoPoolPath = Path("repositories").resolve()
 outPath = Path("db").resolve()
 nitronConfigDir = Path("config").resolve()
-
+sqlDir = Path("cyclon/sql").resolve()
 
 cpanalyzerPath = _binPath / "nitron-CPAnalyzer.jar"
 originalCpanalyzerPath = _binPath / "CPAnalyzer.jar"
 nitronPath = _binPath / "nitron.jar"
 estimaterPath = _binPath / "CPAnalyzer-cost-estimate.jar"
 ammoniaPath = _binPath / "Ammonia.jar"
+setupBugTablesSql = sqlDir / "setupBugTables.sql"
 
 defaultThread = 8
 
