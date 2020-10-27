@@ -1,0 +1,50 @@
+from . import runjar
+from subprocess import CompletedProcess
+import logging
+import subprocess
+
+
+class WarningListMaker(object):
+    """
+    jarPath: str
+        Specify the path to Ammonia.jar
+    """
+    def __init__(self, jarPath: str, heap_GB: int):
+        self.jarPath = jarPath
+        self.heap_GB = heap_GB
+
+    def run(self,
+            dbPath: str,
+            warningDbPath: str,
+            lang: str,
+            gitRepoPath: str
+            ) -> CompletedProcess:
+        logging.debug("start WarningList: {}".format(warningDbPath))
+
+        # NOTE: This program only looks at master branch.
+        commitID = self.__getCommitID(gitRepoPath, "master")
+
+        result = runjar.run(heap_GB=self.heap_GB, jar=self.jarPath,
+                            args=[
+                                "-db", dbPath,
+                                "-lang", lang,
+                                "-gitrepo", gitRepoPath,
+                                "-gitcommit", commitID,
+                                "-wldb", warningDbPath
+                            ])
+
+        if (result.returncode == 0):
+            logging.debug("finish WarningList: {}".format(warningDbPath))
+        else:
+            logging.error("failed WarningList: {}".format(warningDbPath))
+
+        return result
+
+    def __getCommitID(self, repoPath: str, branch: str) -> str:
+        command = [
+            "git", "log",
+            "--format=format:\"%H\"",
+            branch
+        ]
+        result = subprocess.run(command, cwd=repoPath, shell=False)
+        return result.stdout
