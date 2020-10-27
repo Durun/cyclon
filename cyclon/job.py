@@ -1,5 +1,5 @@
 from cyclon.repo import Repository
-from cyclon.env import extractor, originalExtractor, importer, patternMaker, originalPatternMaker, estimater, outPath, defaultThread
+from cyclon.env import extractor, originalExtractor, importer, patternMaker, originalPatternMaker, warningListMaker, estimater, outPath, defaultThread
 from typing import Union
 from pathlib import Path
 import shutil
@@ -38,6 +38,9 @@ class Job(object):
     def runPatternsOriginal(self):
         raise NotImplementedError
 
+    def runWarningList(self):
+        raise NotImplementedError
+
     def cleanRepository(self):
         raise NotImplementedError
 
@@ -52,6 +55,7 @@ class NormalJob(Job):
     def __init__(self, repo: Repository, lang: str, thread: int = defaultThread):
         self.repo = repo
         self.dbPath = outPath / lang / (repo.name + ".db")
+        self.warningDbPath = outPath / lang / (repo.name + ".wl.db")
         self.lang = lang
         self.thread = thread
         os.makedirs(self.dbPath.parent, exist_ok=True)
@@ -167,6 +171,16 @@ class NormalJob(Job):
                 return self.toFailureIf(True)
         return self
 
+    def runWarningList(self) -> Job:
+        logging.info("Start WarningList Job: {}".format(self))
+        result = warningListMaker.run(
+            dbPath=self.dbPath,
+            warningDbPath=self.warningDbPath,
+            lang=self.lang,
+            gitRepoPath=self.repo.dirPath
+        )
+        return self.toFailureIf(result.returncode != 0)
+
     def cleanRepository(self) -> Job:
         return self._removeOnDemand(path=self.repo.dirPath)
 
@@ -210,6 +224,10 @@ class FailuredJob(Job):
 
     def runPatternsOriginal(self) -> Job:
         logging.warn("Skipped run Patterns: {}".format(self))
+        return self
+
+    def runWarningList(self) -> Job:
+        logging.warn("Skipped run WarningList: {}".format(self))
         return self
 
     def cleanRepository(self) -> Job:
