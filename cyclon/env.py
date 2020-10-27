@@ -2,6 +2,7 @@ from pathlib import Path
 from .ChangeExtractor import ChangeExtractor
 from .AstImporter import AstImporter
 from .PatternMaker import PatternMaker
+from .WarningListMaker import WarningListMaker
 
 _binPath = Path("bin").resolve().absolute()
 
@@ -14,6 +15,7 @@ cpanalyzerPath = _binPath / "nitron-CPAnalyzer.jar"
 originalCpanalyzerPath = _binPath / "CPAnalyzer.jar"
 nitronPath = _binPath / "nitron.jar"
 estimaterPath = _binPath / "CPAnalyzer-cost-estimate.jar"
+ammoniaPath = _binPath / "Ammonia.jar"
 
 defaultThread = 8
 
@@ -50,5 +52,10 @@ originalExtractor = ChangeExtractor(
 
 originalPatternMaker = PatternMaker(
     jarPath=originalCpanalyzerPath,
+    heap_GB=4
+)
+
+warningListMaker = WarningListMaker(
+    jarPath=ammoniaPath,
     heap_GB=4
 )
