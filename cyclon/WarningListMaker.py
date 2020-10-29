@@ -23,7 +23,7 @@ class WarningListMaker(object):
         logging.debug("start WarningList: {}".format(warningDbPath))
 
         setupResult = self.__setupDatabase(dbPath)
-        if (setupResult != 0):
+        if (setupResult.returncode != 0):
             logging.error("failed WarningList: Can't apply SQL > {}".format(dbPath))
             return setupResult
 
@@ -59,5 +59,7 @@ class WarningListMaker(object):
             "--format=format:\"%H\"",
             branch
         ]
-        result = subprocess.run(command, cwd=repoPath, shell=False)
-        return result.stdout
+        result = subprocess.run(command, cwd=repoPath, shell=False, stdout=subprocess.PIPE)
+        ids = result.stdout.decode().split("\n")
+        id = ids[0].replace("\"", "")
+        return id
