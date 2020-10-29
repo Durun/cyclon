@@ -6,8 +6,6 @@ from .WarningListMaker import WarningListMaker
 
 _binPath = Path("bin").resolve().absolute()
 
-sqlBin = "sqlite3"
-
 repoPoolPath = Path("repositories").resolve()
 outPath = Path("db").resolve()
 nitronConfigDir = Path("config").resolve()
@@ -60,5 +58,6 @@ originalPatternMaker = PatternMaker(
 
 warningListMaker = WarningListMaker(
     jarPath=ammoniaPath,
+    setupBugTablesSql=setupBugTablesSql,
     heap_GB=4
 )

@@ -1,5 +1,4 @@
 from . import runjar, runsql
-from .env import setupBugTablesSql
 from subprocess import CompletedProcess
 import logging
 import subprocess
@@ -10,8 +9,9 @@ class WarningListMaker(object):
     jarPath: str
         Specify the path to Ammonia.jar
     """
-    def __init__(self, jarPath: str, heap_GB: int):
+    def __init__(self, jarPath: str, setupBugTablesSql: str, heap_GB: int):
         self.jarPath = jarPath
+        self.setupBugTablesSql = setupBugTablesSql
         self.heap_GB = heap_GB
 
     def run(self,
@@ -49,7 +49,7 @@ class WarningListMaker(object):
     def __setupDatabase(self, dbPath: str) -> CompletedProcess:
         result = runsql.run(
             db=dbPath,
-            sqlFile=setupBugTablesSql
+            sqlFile=self.setupBugTablesSql
         )
         return result
 

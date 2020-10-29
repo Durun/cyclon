@@ -2,7 +2,8 @@ from pathlib import Path
 import subprocess
 import logging
 import time
-from .env import sqlBin
+
+sqlBin = "sqlite3"
 
 def run(db: Path, sqlFile: Path) -> subprocess.CompletedProcess:
     elapsedTime = time.perf_counter()
