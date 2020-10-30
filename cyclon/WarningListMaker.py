@@ -28,8 +28,7 @@ class WarningListMaker(object):
             logging.error("failed WarningList: Can't apply SQL > {}".format(dbPath))
             return setupResult
 
-        # NOTE: This program only looks at master branch.
-        commitID = self.__getCommitID(gitRepoPath, "master")
+        commitID = self.__getCommitID(gitRepoPath)
 
         result = runjar.run(heap_GB=self.heap_GB, jar=self.jarPath,
                             args=[
