@@ -2,6 +2,7 @@ from . import runjar, runsql
 from subprocess import CompletedProcess
 import logging
 import subprocess
+from typing import Union
 
 
 class WarningListMaker(object):
@@ -53,12 +54,12 @@ class WarningListMaker(object):
         )
         return result
 
-    def __getCommitID(self, repoPath: str, branch: str) -> str:
+    def __getCommitID(self, repoPath: str, branch: Union[str, None] = None) -> str:
         command = [
             "git", "log",
-            "--format=format:\"%H\"",
-            branch
+            "--format=format:\"%H\""
         ]
+        if branch is not None: command.append(branch)
         result = subprocess.run(command, cwd=repoPath, shell=False, stdout=subprocess.PIPE)
         ids = result.stdout.decode().split("\n")
         id = ids[0].replace("\"", "")
